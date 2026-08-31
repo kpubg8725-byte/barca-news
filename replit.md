@@ -1,6 +1,6 @@
-# [Project name]
+# Barça News
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+تطبيق أخبار برشلونة باللغة العربية، مصمم للهواتف أولاً مع أخبار وانتقالات ومباريات وبحث ومفضلة وتنبيهات.
 
 ## Run & Operate
 
@@ -22,23 +22,31 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/barca-news/src/data/models.ts` — النماذج والبيانات التجريبية المحلية ومصدر المحتوى الأولي.
+- `artifacts/barca-news/src/components/barca-ui.tsx` — غلاف التطبيق والمكوّنات القابلة لإعادة الاستخدام.
+- `artifacts/barca-news/src/pages/barca-pages.tsx` — صفحات التطبيق ومساراتها وتفاعلاتها المحلية.
+- `artifacts/barca-news/src/index.css` — نظام الألوان والخطوط والتجاوب والأنيميشن.
+- `artifacts/barca-news/src/App.tsx` — إعداد المسارات ومزوّدات التطبيق.
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- النسخة الأولى تعمل بمحتوى محلي typed data حتى تبقى قابلة للعرض دون خدمة خارجية.
+- المفضلة وحالة قراءة التنبيهات محفوظتان في localStorage لتجربة نموذج أولي حقيقية.
+- فصل النماذج عن العرض يسهّل استبدال مصدر البيانات لاحقاً بواجهة API وقاعدة بيانات ولوحة تحكم.
+- wouter مستخدم لمسارات الصفحات مع غلاف مشترك وتنقّل سفلي على الهاتف وشريط جانبي على الشاشات الكبيرة.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Barça News هو مركز عربي سريع لمتابعة أخبار نادي برشلونة: الأخبار العاجلة والمميزة، سوق الانتقالات، الروزنامة والنتائج، البحث عن الأخبار واللاعبين، حفظ القصص والتنبيهات.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- واجهة عربية RTL، داكنة وحديثة، وموجهة أساساً للهواتف.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- الصور الحالية روابط عامة للعرض التجريبي؛ عند ربط API حقيقي يجب نقل الصور إلى مصدر موثوق أو تخزين كائنات.
+- التطبيق الأمامي مستقل حالياً عن API server المشترك؛ أي ربط حقيقي لاحقاً يبدأ من عقد API واضحة ثم يُستبدل مصدر `models.ts`.
 
 ## Pointers
 

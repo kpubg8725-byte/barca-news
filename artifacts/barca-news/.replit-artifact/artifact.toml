@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Barça News"
+description = "A mobile-first Arabic RTL FC Barcelona news application with live-style sample content, transfers, matches, search, favorites, notifications, and an architecture ready for future APIs and databases."
+version = "1.0.0"
+id = "artifacts/barca-news"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20940
+
+[services.development]
+run = "pnpm --filter @workspace/barca-news run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/barca-news", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/barca-news/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20940"
+BASE_PATH = "/"
