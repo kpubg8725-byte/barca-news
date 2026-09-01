@@ -5,6 +5,7 @@ import { AppShell } from '@/components/barca-ui';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
+import { AdminCategoriesPage, AdminMatchesPage, AdminNewsEditorPage, AdminNewsPage, AdminOverviewPage, AdminTransfersPage } from '@/pages/admin-pages';
 import {
   FavoritesPage,
   HomePage,
@@ -24,6 +25,23 @@ import {
 const queryClient = new QueryClient();
 
 function Router() {
+  const [location] = useLocation();
+  if (location.startsWith('/admin')) {
+    return (
+      <RoutedErrorBoundary>
+        <Switch>
+          <Route path="/admin" component={AdminOverviewPage} />
+          <Route path="/admin/news" component={AdminNewsPage} />
+          <Route path="/admin/news/new" component={AdminNewsEditorPage} />
+          <Route path="/admin/news/:id/edit" component={AdminNewsEditorPage} />
+          <Route path="/admin/categories" component={AdminCategoriesPage} />
+          <Route path="/admin/transfers" component={AdminTransfersPage} />
+          <Route path="/admin/matches" component={AdminMatchesPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </RoutedErrorBoundary>
+    );
+  }
   return (
     <AppShell>
       <RoutedErrorBoundary>

@@ -3,7 +3,7 @@
  * Do not edit manually.
  * Api
  * Public Barça News API
- * OpenAPI spec version: 0.2.0
+ * OpenAPI spec version: 0.3.0
  */
 export interface HealthStatus {
   status: string;
@@ -11,16 +11,6 @@ export interface HealthStatus {
 
 export interface ErrorResponse {
   error: string;
-}
-
-export interface Category {
-  id: number;
-  slug: string;
-  nameAr: string;
-  /** @nullable */
-  nameEn: string | null;
-  sortOrder: number;
-  isActive: boolean;
 }
 
 export type NewsStatus = typeof NewsStatus[keyof typeof NewsStatus];
@@ -58,6 +48,128 @@ export interface News {
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AdminDashboard {
+  publishedCount: number;
+  draftCount: number;
+  breakingCount: number;
+  featuredCount: number;
+  latestUpdated: News[];
+}
+
+export interface AdminNewsCreateRequest {
+  /** @minLength 1 */
+  titleAr: string;
+  /** @minLength 1 */
+  summaryAr: string;
+  /** @minLength 1 */
+  bodyAr: string;
+  categoryId: number;
+  /** @nullable */
+  coverImagePath: string | null;
+  /** @nullable */
+  imageAltAr: string | null;
+  tags: string[];
+  isFeatured: boolean;
+  isBreaking: boolean;
+  /** @nullable */
+  readingMinutes: number | null;
+}
+
+export type AdminNewsUpdateRequest = AdminNewsCreateRequest;
+
+export interface AdminCategoryCreateRequest {
+  /** @minLength 1 */
+  slug: string;
+  /** @minLength 1 */
+  nameAr: string;
+  /** @nullable */
+  nameEn: string | null;
+  sortOrder: number;
+  isActive: boolean;
+}
+
+export type AdminCategoryUpdateRequest = AdminCategoryCreateRequest;
+
+export type AdminTransferRequestStatus = typeof AdminTransferRequestStatus[keyof typeof AdminTransferRequestStatus];
+
+
+export const AdminTransferRequestStatus = {
+  completed: 'completed',
+  negotiation: 'negotiation',
+  rumor: 'rumor',
+} as const;
+
+export interface AdminTransferRequest {
+  /** @nullable */
+  playerId: number | null;
+  /** @minLength 1 */
+  playerNameAr: string;
+  /** @nullable */
+  position: string | null;
+  /** @nullable */
+  fromClub: string | null;
+  /** @minLength 1 */
+  toClub: string;
+  /** @nullable */
+  feeAmount: number | null;
+  /** @nullable */
+  feeCurrency: string | null;
+  /** @nullable */
+  feeLabelAr: string | null;
+  status: AdminTransferRequestStatus;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  confidence: number;
+  /** @nullable */
+  notesAr: string | null;
+  /** @nullable */
+  announcedAt: string | null;
+}
+
+export type AdminMatchRequestStatus = typeof AdminMatchRequestStatus[keyof typeof AdminMatchRequestStatus];
+
+
+export const AdminMatchRequestStatus = {
+  scheduled: 'scheduled',
+  live: 'live',
+  finished: 'finished',
+  postponed: 'postponed',
+  cancelled: 'cancelled',
+} as const;
+
+export interface AdminMatchRequest {
+  /** @minLength 1 */
+  competition: string;
+  /** @minLength 1 */
+  homeTeam: string;
+  /** @minLength 1 */
+  awayTeam: string;
+  /** @nullable */
+  homeShort: string | null;
+  /** @nullable */
+  awayShort: string | null;
+  kickoffAt: string;
+  /** @nullable */
+  venue: string | null;
+  status: AdminMatchRequestStatus;
+  /** @nullable */
+  homeScore: number | null;
+  /** @nullable */
+  awayScore: number | null;
+}
+
+export interface Category {
+  id: number;
+  slug: string;
+  nameAr: string;
+  /** @nullable */
+  nameEn: string | null;
+  sortOrder: number;
+  isActive: boolean;
 }
 
 export interface NewsListResponse {
@@ -154,6 +266,11 @@ export type BadRequestResponse = ErrorResponse;
  */
 export type NotFoundResponse = ErrorResponse;
 
+/**
+ * Temporary development admin guard rejected the request
+ */
+export type ForbiddenResponse = ErrorResponse;
+
 export type ListNewsParams = {
 search?: string;
 category?: string;
@@ -202,5 +319,31 @@ export const ListTransfersStatus = {
   completed: 'completed',
   negotiation: 'negotiation',
   rumor: 'rumor',
+} as const;
+
+export type ListAdminNewsParams = {
+search?: string;
+category?: string;
+status?: ListAdminNewsStatus;
+featured?: boolean;
+breaking?: boolean;
+/**
+ * @minimum 1
+ */
+page?: number;
+/**
+ * @minimum 1
+ * @maximum 50
+ */
+pageSize?: number;
+};
+
+export type ListAdminNewsStatus = typeof ListAdminNewsStatus[keyof typeof ListAdminNewsStatus];
+
+
+export const ListAdminNewsStatus = {
+  draft: 'draft',
+  published: 'published',
+  archived: 'archived',
 } as const;
 

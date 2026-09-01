@@ -3,7 +3,7 @@
  * Do not edit manually.
  * Api
  * Public Barça News API
- * OpenAPI spec version: 0.2.0
+ * OpenAPI spec version: 0.3.0
  */
 import * as zod from 'zod';
 
@@ -185,5 +185,614 @@ export const ListTransfersResponseItem = zod.object({
   "announcedAt": zod.coerce.date().nullable()
 })
 export const ListTransfersResponse = zod.array(ListTransfersResponseItem)
+
+
+/**
+ * @summary Admin dashboard overview
+ */
+export const GetAdminDashboardResponse = zod.object({
+  "publishedCount": zod.number(),
+  "draftCount": zod.number(),
+  "breakingCount": zod.number(),
+  "featuredCount": zod.number(),
+  "latestUpdated": zod.array(zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "titleAr": zod.string(),
+  "summaryAr": zod.string(),
+  "bodyAr": zod.string(),
+  "coverImagePath": zod.string().nullable(),
+  "imageAltAr": zod.string().nullable(),
+  "categoryId": zod.number(),
+  "categoryNameAr": zod.string(),
+  "authorId": zod.number().nullable(),
+  "relatedMatchId": zod.number().nullable(),
+  "status": zod.enum(['draft', 'published', 'archived']),
+  "isFeatured": zod.boolean(),
+  "isBreaking": zod.boolean(),
+  "readingMinutes": zod.number().nullable(),
+  "tags": zod.array(zod.string()),
+  "publishedAt": zod.coerce.date().nullable(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+}))
+})
+
+
+/**
+ * @summary List all news for editorial management
+ */
+export const listAdminNewsQueryPageDefault = 1;
+
+export const listAdminNewsQueryPageSizeDefault = 20;
+export const listAdminNewsQueryPageSizeMax = 50;
+
+
+
+export const ListAdminNewsQueryParams = zod.object({
+  "search": zod.coerce.string().optional(),
+  "category": zod.coerce.string().optional(),
+  "status": zod.enum(['draft', 'published', 'archived']).optional(),
+  "featured": zod.coerce.boolean().optional(),
+  "breaking": zod.coerce.boolean().optional(),
+  "page": zod.coerce.number().int().min(1).default(listAdminNewsQueryPageDefault),
+  "pageSize": zod.coerce.number().int().min(1).max(listAdminNewsQueryPageSizeMax).default(listAdminNewsQueryPageSizeDefault)
+})
+
+export const ListAdminNewsResponse = zod.object({
+  "items": zod.array(zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "titleAr": zod.string(),
+  "summaryAr": zod.string(),
+  "bodyAr": zod.string(),
+  "coverImagePath": zod.string().nullable(),
+  "imageAltAr": zod.string().nullable(),
+  "categoryId": zod.number(),
+  "categoryNameAr": zod.string(),
+  "authorId": zod.number().nullable(),
+  "relatedMatchId": zod.number().nullable(),
+  "status": zod.enum(['draft', 'published', 'archived']),
+  "isFeatured": zod.boolean(),
+  "isBreaking": zod.boolean(),
+  "readingMinutes": zod.number().nullable(),
+  "tags": zod.array(zod.string()),
+  "publishedAt": zod.coerce.date().nullable(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})),
+  "page": zod.number(),
+  "pageSize": zod.number(),
+  "total": zod.number()
+})
+
+
+/**
+ * @summary Create a news article
+ */
+
+
+
+export const createAdminNewsBodyIsFeaturedDefault = false;
+export const createAdminNewsBodyIsBreakingDefault = false;
+
+export const CreateAdminNewsBody = zod.object({
+  "titleAr": zod.string().min(1),
+  "summaryAr": zod.string().min(1),
+  "bodyAr": zod.string().min(1),
+  "categoryId": zod.number(),
+  "coverImagePath": zod.string().nullable(),
+  "imageAltAr": zod.string().nullable(),
+  "tags": zod.array(zod.string()),
+  "isFeatured": zod.boolean().default(createAdminNewsBodyIsFeaturedDefault),
+  "isBreaking": zod.boolean().default(createAdminNewsBodyIsBreakingDefault),
+  "readingMinutes": zod.number().nullable()
+})
+
+export const CreateAdminNewsResponse = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "titleAr": zod.string(),
+  "summaryAr": zod.string(),
+  "bodyAr": zod.string(),
+  "coverImagePath": zod.string().nullable(),
+  "imageAltAr": zod.string().nullable(),
+  "categoryId": zod.number(),
+  "categoryNameAr": zod.string(),
+  "authorId": zod.number().nullable(),
+  "relatedMatchId": zod.number().nullable(),
+  "status": zod.enum(['draft', 'published', 'archived']),
+  "isFeatured": zod.boolean(),
+  "isBreaking": zod.boolean(),
+  "readingMinutes": zod.number().nullable(),
+  "tags": zod.array(zod.string()),
+  "publishedAt": zod.coerce.date().nullable(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Get a news article for editing
+ */
+
+
+
+export const GetAdminNewsParams = zod.object({
+  "id": zod.coerce.number().min(1)
+})
+
+export const GetAdminNewsResponse = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "titleAr": zod.string(),
+  "summaryAr": zod.string(),
+  "bodyAr": zod.string(),
+  "coverImagePath": zod.string().nullable(),
+  "imageAltAr": zod.string().nullable(),
+  "categoryId": zod.number(),
+  "categoryNameAr": zod.string(),
+  "authorId": zod.number().nullable(),
+  "relatedMatchId": zod.number().nullable(),
+  "status": zod.enum(['draft', 'published', 'archived']),
+  "isFeatured": zod.boolean(),
+  "isBreaking": zod.boolean(),
+  "readingMinutes": zod.number().nullable(),
+  "tags": zod.array(zod.string()),
+  "publishedAt": zod.coerce.date().nullable(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Save changes to a news article
+ */
+
+
+
+export const UpdateAdminNewsParams = zod.object({
+  "id": zod.coerce.number().min(1)
+})
+
+
+
+
+export const updateAdminNewsBodyOneIsFeaturedDefault = false;
+export const updateAdminNewsBodyOneIsBreakingDefault = false;
+
+export const UpdateAdminNewsBody = zod.object({
+  "titleAr": zod.string().min(1),
+  "summaryAr": zod.string().min(1),
+  "bodyAr": zod.string().min(1),
+  "categoryId": zod.number(),
+  "coverImagePath": zod.string().nullable(),
+  "imageAltAr": zod.string().nullable(),
+  "tags": zod.array(zod.string()),
+  "isFeatured": zod.boolean().default(updateAdminNewsBodyOneIsFeaturedDefault),
+  "isBreaking": zod.boolean().default(updateAdminNewsBodyOneIsBreakingDefault),
+  "readingMinutes": zod.number().nullable()
+})
+
+export const UpdateAdminNewsResponse = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "titleAr": zod.string(),
+  "summaryAr": zod.string(),
+  "bodyAr": zod.string(),
+  "coverImagePath": zod.string().nullable(),
+  "imageAltAr": zod.string().nullable(),
+  "categoryId": zod.number(),
+  "categoryNameAr": zod.string(),
+  "authorId": zod.number().nullable(),
+  "relatedMatchId": zod.number().nullable(),
+  "status": zod.enum(['draft', 'published', 'archived']),
+  "isFeatured": zod.boolean(),
+  "isBreaking": zod.boolean(),
+  "readingMinutes": zod.number().nullable(),
+  "tags": zod.array(zod.string()),
+  "publishedAt": zod.coerce.date().nullable(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Delete a news article
+ */
+
+
+
+export const DeleteAdminNewsParams = zod.object({
+  "id": zod.coerce.number().min(1)
+})
+
+export const DeleteAdminNewsResponse = zod.void()
+
+
+/**
+ * @summary Publish a news article
+ */
+
+
+
+export const PublishAdminNewsParams = zod.object({
+  "id": zod.coerce.number().min(1)
+})
+
+export const PublishAdminNewsResponse = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "titleAr": zod.string(),
+  "summaryAr": zod.string(),
+  "bodyAr": zod.string(),
+  "coverImagePath": zod.string().nullable(),
+  "imageAltAr": zod.string().nullable(),
+  "categoryId": zod.number(),
+  "categoryNameAr": zod.string(),
+  "authorId": zod.number().nullable(),
+  "relatedMatchId": zod.number().nullable(),
+  "status": zod.enum(['draft', 'published', 'archived']),
+  "isFeatured": zod.boolean(),
+  "isBreaking": zod.boolean(),
+  "readingMinutes": zod.number().nullable(),
+  "tags": zod.array(zod.string()),
+  "publishedAt": zod.coerce.date().nullable(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Archive a news article
+ */
+
+
+
+export const ArchiveAdminNewsParams = zod.object({
+  "id": zod.coerce.number().min(1)
+})
+
+export const ArchiveAdminNewsResponse = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "titleAr": zod.string(),
+  "summaryAr": zod.string(),
+  "bodyAr": zod.string(),
+  "coverImagePath": zod.string().nullable(),
+  "imageAltAr": zod.string().nullable(),
+  "categoryId": zod.number(),
+  "categoryNameAr": zod.string(),
+  "authorId": zod.number().nullable(),
+  "relatedMatchId": zod.number().nullable(),
+  "status": zod.enum(['draft', 'published', 'archived']),
+  "isFeatured": zod.boolean(),
+  "isBreaking": zod.boolean(),
+  "readingMinutes": zod.number().nullable(),
+  "tags": zod.array(zod.string()),
+  "publishedAt": zod.coerce.date().nullable(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary List all categories
+ */
+export const ListAdminCategoriesResponseItem = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "nameAr": zod.string(),
+  "nameEn": zod.string().nullable(),
+  "sortOrder": zod.number(),
+  "isActive": zod.boolean()
+})
+export const ListAdminCategoriesResponse = zod.array(ListAdminCategoriesResponseItem)
+
+
+/**
+ * @summary Create a category
+ */
+
+
+
+
+export const CreateAdminCategoryBody = zod.object({
+  "slug": zod.string().min(1),
+  "nameAr": zod.string().min(1),
+  "nameEn": zod.string().nullable(),
+  "sortOrder": zod.number(),
+  "isActive": zod.boolean()
+})
+
+export const CreateAdminCategoryResponse = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "nameAr": zod.string(),
+  "nameEn": zod.string().nullable(),
+  "sortOrder": zod.number(),
+  "isActive": zod.boolean()
+})
+
+
+/**
+ * @summary Update a category
+ */
+
+
+
+export const UpdateAdminCategoryParams = zod.object({
+  "id": zod.coerce.number().min(1)
+})
+
+
+
+
+
+export const UpdateAdminCategoryBody = zod.object({
+  "slug": zod.string().min(1),
+  "nameAr": zod.string().min(1),
+  "nameEn": zod.string().nullable(),
+  "sortOrder": zod.number(),
+  "isActive": zod.boolean()
+})
+
+export const UpdateAdminCategoryResponse = zod.object({
+  "id": zod.number(),
+  "slug": zod.string(),
+  "nameAr": zod.string(),
+  "nameEn": zod.string().nullable(),
+  "sortOrder": zod.number(),
+  "isActive": zod.boolean()
+})
+
+
+/**
+ * @summary Delete a category when it has no news
+ */
+
+
+
+export const DeleteAdminCategoryParams = zod.object({
+  "id": zod.coerce.number().min(1)
+})
+
+export const DeleteAdminCategoryResponse = zod.void()
+
+
+/**
+ * @summary List all transfers
+ */
+export const ListAdminTransfersResponseItem = zod.object({
+  "id": zod.number(),
+  "playerId": zod.number().nullable(),
+  "playerNameAr": zod.string(),
+  "position": zod.string().nullable(),
+  "fromClub": zod.string().nullable(),
+  "toClub": zod.string(),
+  "feeAmount": zod.number().nullable(),
+  "feeCurrency": zod.string().nullable(),
+  "feeLabelAr": zod.string().nullable(),
+  "status": zod.enum(['completed', 'negotiation', 'rumor']),
+  "confidence": zod.number(),
+  "notesAr": zod.string().nullable(),
+  "announcedAt": zod.coerce.date().nullable()
+})
+export const ListAdminTransfersResponse = zod.array(ListAdminTransfersResponseItem)
+
+
+/**
+ * @summary Create a transfer
+ */
+
+
+export const createAdminTransferBodyConfidenceMin = 0;
+export const createAdminTransferBodyConfidenceMax = 100;
+
+
+
+export const CreateAdminTransferBody = zod.object({
+  "playerId": zod.number().nullable(),
+  "playerNameAr": zod.string().min(1),
+  "position": zod.string().nullable(),
+  "fromClub": zod.string().nullable(),
+  "toClub": zod.string().min(1),
+  "feeAmount": zod.number().nullable(),
+  "feeCurrency": zod.string().nullable(),
+  "feeLabelAr": zod.string().nullable(),
+  "status": zod.enum(['completed', 'negotiation', 'rumor']),
+  "confidence": zod.number().min(createAdminTransferBodyConfidenceMin).max(createAdminTransferBodyConfidenceMax),
+  "notesAr": zod.string().nullable(),
+  "announcedAt": zod.coerce.date().nullable()
+})
+
+export const CreateAdminTransferResponse = zod.object({
+  "id": zod.number(),
+  "playerId": zod.number().nullable(),
+  "playerNameAr": zod.string(),
+  "position": zod.string().nullable(),
+  "fromClub": zod.string().nullable(),
+  "toClub": zod.string(),
+  "feeAmount": zod.number().nullable(),
+  "feeCurrency": zod.string().nullable(),
+  "feeLabelAr": zod.string().nullable(),
+  "status": zod.enum(['completed', 'negotiation', 'rumor']),
+  "confidence": zod.number(),
+  "notesAr": zod.string().nullable(),
+  "announcedAt": zod.coerce.date().nullable()
+})
+
+
+/**
+ * @summary Update a transfer
+ */
+
+
+
+export const UpdateAdminTransferParams = zod.object({
+  "id": zod.coerce.number().min(1)
+})
+
+
+
+export const updateAdminTransferBodyConfidenceMin = 0;
+export const updateAdminTransferBodyConfidenceMax = 100;
+
+
+
+export const UpdateAdminTransferBody = zod.object({
+  "playerId": zod.number().nullable(),
+  "playerNameAr": zod.string().min(1),
+  "position": zod.string().nullable(),
+  "fromClub": zod.string().nullable(),
+  "toClub": zod.string().min(1),
+  "feeAmount": zod.number().nullable(),
+  "feeCurrency": zod.string().nullable(),
+  "feeLabelAr": zod.string().nullable(),
+  "status": zod.enum(['completed', 'negotiation', 'rumor']),
+  "confidence": zod.number().min(updateAdminTransferBodyConfidenceMin).max(updateAdminTransferBodyConfidenceMax),
+  "notesAr": zod.string().nullable(),
+  "announcedAt": zod.coerce.date().nullable()
+})
+
+export const UpdateAdminTransferResponse = zod.object({
+  "id": zod.number(),
+  "playerId": zod.number().nullable(),
+  "playerNameAr": zod.string(),
+  "position": zod.string().nullable(),
+  "fromClub": zod.string().nullable(),
+  "toClub": zod.string(),
+  "feeAmount": zod.number().nullable(),
+  "feeCurrency": zod.string().nullable(),
+  "feeLabelAr": zod.string().nullable(),
+  "status": zod.enum(['completed', 'negotiation', 'rumor']),
+  "confidence": zod.number(),
+  "notesAr": zod.string().nullable(),
+  "announcedAt": zod.coerce.date().nullable()
+})
+
+
+/**
+ * @summary Delete a transfer
+ */
+
+
+
+export const DeleteAdminTransferParams = zod.object({
+  "id": zod.coerce.number().min(1)
+})
+
+export const DeleteAdminTransferResponse = zod.void()
+
+
+/**
+ * @summary List all matches
+ */
+export const ListAdminMatchesResponseItem = zod.object({
+  "id": zod.number(),
+  "competition": zod.string(),
+  "homeTeam": zod.string(),
+  "awayTeam": zod.string(),
+  "homeShort": zod.string().nullable(),
+  "awayShort": zod.string().nullable(),
+  "kickoffAt": zod.coerce.date(),
+  "venue": zod.string().nullable(),
+  "status": zod.enum(['scheduled', 'live', 'finished', 'postponed', 'cancelled']),
+  "homeScore": zod.number().nullable(),
+  "awayScore": zod.number().nullable()
+})
+export const ListAdminMatchesResponse = zod.array(ListAdminMatchesResponseItem)
+
+
+/**
+ * @summary Create a match
+ */
+
+
+
+
+
+export const CreateAdminMatchBody = zod.object({
+  "competition": zod.string().min(1),
+  "homeTeam": zod.string().min(1),
+  "awayTeam": zod.string().min(1),
+  "homeShort": zod.string().nullable(),
+  "awayShort": zod.string().nullable(),
+  "kickoffAt": zod.coerce.date(),
+  "venue": zod.string().nullable(),
+  "status": zod.enum(['scheduled', 'live', 'finished', 'postponed', 'cancelled']),
+  "homeScore": zod.number().nullable(),
+  "awayScore": zod.number().nullable()
+})
+
+export const CreateAdminMatchResponse = zod.object({
+  "id": zod.number(),
+  "competition": zod.string(),
+  "homeTeam": zod.string(),
+  "awayTeam": zod.string(),
+  "homeShort": zod.string().nullable(),
+  "awayShort": zod.string().nullable(),
+  "kickoffAt": zod.coerce.date(),
+  "venue": zod.string().nullable(),
+  "status": zod.enum(['scheduled', 'live', 'finished', 'postponed', 'cancelled']),
+  "homeScore": zod.number().nullable(),
+  "awayScore": zod.number().nullable()
+})
+
+
+/**
+ * @summary Update a match, score, or status
+ */
+
+
+
+export const UpdateAdminMatchParams = zod.object({
+  "id": zod.coerce.number().min(1)
+})
+
+
+
+
+
+
+export const UpdateAdminMatchBody = zod.object({
+  "competition": zod.string().min(1),
+  "homeTeam": zod.string().min(1),
+  "awayTeam": zod.string().min(1),
+  "homeShort": zod.string().nullable(),
+  "awayShort": zod.string().nullable(),
+  "kickoffAt": zod.coerce.date(),
+  "venue": zod.string().nullable(),
+  "status": zod.enum(['scheduled', 'live', 'finished', 'postponed', 'cancelled']),
+  "homeScore": zod.number().nullable(),
+  "awayScore": zod.number().nullable()
+})
+
+export const UpdateAdminMatchResponse = zod.object({
+  "id": zod.number(),
+  "competition": zod.string(),
+  "homeTeam": zod.string(),
+  "awayTeam": zod.string(),
+  "homeShort": zod.string().nullable(),
+  "awayShort": zod.string().nullable(),
+  "kickoffAt": zod.coerce.date(),
+  "venue": zod.string().nullable(),
+  "status": zod.enum(['scheduled', 'live', 'finished', 'postponed', 'cancelled']),
+  "homeScore": zod.number().nullable(),
+  "awayScore": zod.number().nullable()
+})
+
+
+/**
+ * @summary Delete a match
+ */
+
+
+
+export const DeleteAdminMatchParams = zod.object({
+  "id": zod.coerce.number().min(1)
+})
+
+export const DeleteAdminMatchResponse = zod.void()
 
 

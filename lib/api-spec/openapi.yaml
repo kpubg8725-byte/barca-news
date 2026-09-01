@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.2.0
+  version: 0.3.0
   description: Public Barça News API
 servers:
   - url: /api
@@ -192,7 +192,428 @@ paths:
                   $ref: "#/components/schemas/Transfer"
         "400":
           $ref: "#/components/responses/BadRequest"
+  /admin/dashboard:
+    get:
+      operationId: getAdminDashboard
+      tags: [admin]
+      summary: Admin dashboard overview
+      responses:
+        "200":
+          description: Editorial overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDashboard"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /admin/news:
+    get:
+      operationId: listAdminNews
+      tags: [admin]
+      summary: List all news for editorial management
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [draft, published, archived]
+        - name: featured
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: breaking
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        "200":
+          description: All news
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsListResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      operationId: createAdminNews
+      tags: [admin]
+      summary: Create a news article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminNewsCreateRequest"
+      responses:
+        "201":
+          description: Created news article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /admin/news/{id}:
+    get:
+      operationId: getAdminNews
+      tags: [admin]
+      summary: Get a news article for editing
+      parameters:
+        - $ref: "#/components/parameters/AdminId"
+      responses:
+        "200":
+          description: News article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: updateAdminNews
+      tags: [admin]
+      summary: Save changes to a news article
+      parameters:
+        - $ref: "#/components/parameters/AdminId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminNewsUpdateRequest"
+      responses:
+        "200":
+          description: Updated news article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteAdminNews
+      tags: [admin]
+      summary: Delete a news article
+      parameters:
+        - $ref: "#/components/parameters/AdminId"
+      responses:
+        "204":
+          description: News deleted
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /admin/news/{id}/publish:
+    post:
+      operationId: publishAdminNews
+      tags: [admin]
+      summary: Publish a news article
+      parameters:
+        - $ref: "#/components/parameters/AdminId"
+      responses:
+        "200":
+          description: Published news article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /admin/news/{id}/archive:
+    post:
+      operationId: archiveAdminNews
+      tags: [admin]
+      summary: Archive a news article
+      parameters:
+        - $ref: "#/components/parameters/AdminId"
+      responses:
+        "200":
+          description: Archived news article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /admin/categories:
+    get:
+      operationId: listAdminCategories
+      tags: [admin]
+      summary: List all categories
+      responses:
+        "200":
+          description: All categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      operationId: createAdminCategory
+      tags: [admin]
+      summary: Create a category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminCategoryCreateRequest"
+      responses:
+        "201":
+          description: Created category
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /admin/categories/{id}:
+    patch:
+      operationId: updateAdminCategory
+      tags: [admin]
+      summary: Update a category
+      parameters:
+        - $ref: "#/components/parameters/AdminId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminCategoryUpdateRequest"
+      responses:
+        "200":
+          description: Updated category
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteAdminCategory
+      tags: [admin]
+      summary: Delete a category when it has no news
+      parameters:
+        - $ref: "#/components/parameters/AdminId"
+      responses:
+        "204":
+          description: Category deleted
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /admin/transfers:
+    get:
+      operationId: listAdminTransfers
+      tags: [admin]
+      summary: List all transfers
+      responses:
+        "200":
+          description: All transfers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transfer"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      operationId: createAdminTransfer
+      tags: [admin]
+      summary: Create a transfer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminTransferRequest"
+      responses:
+        "201":
+          description: Created transfer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /admin/transfers/{id}:
+    patch:
+      operationId: updateAdminTransfer
+      tags: [admin]
+      summary: Update a transfer
+      parameters:
+        - $ref: "#/components/parameters/AdminId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminTransferRequest"
+      responses:
+        "200":
+          description: Updated transfer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteAdminTransfer
+      tags: [admin]
+      summary: Delete a transfer
+      parameters:
+        - $ref: "#/components/parameters/AdminId"
+      responses:
+        "204":
+          description: Transfer deleted
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /admin/matches:
+    get:
+      operationId: listAdminMatches
+      tags: [admin]
+      summary: List all matches
+      responses:
+        "200":
+          description: All matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Match"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      operationId: createAdminMatch
+      tags: [admin]
+      summary: Create a match
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminMatchRequest"
+      responses:
+        "201":
+          description: Created match
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /admin/matches/{id}:
+    patch:
+      operationId: updateAdminMatch
+      tags: [admin]
+      summary: Update a match, score, or status
+      parameters:
+        - $ref: "#/components/parameters/AdminId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminMatchRequest"
+      responses:
+        "200":
+          description: Updated match
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteAdminMatch
+      tags: [admin]
+      summary: Delete a match
+      parameters:
+        - $ref: "#/components/parameters/AdminId"
+      responses:
+        "204":
+          description: Match deleted
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
 components:
+  parameters:
+    AdminId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: number
+        minimum: 1
   responses:
     BadRequest:
       description: Invalid request
@@ -202,6 +623,12 @@ components:
             $ref: "#/components/schemas/ErrorResponse"
     NotFound:
       description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Forbidden:
+      description: Temporary development admin guard rejected the request
       content:
         application/json:
           schema:
@@ -221,6 +648,175 @@ components:
           type: string
       required:
         - error
+    AdminDashboard:
+      type: object
+      properties:
+        publishedCount:
+          type: number
+        draftCount:
+          type: number
+        breakingCount:
+          type: number
+        featuredCount:
+          type: number
+        latestUpdated:
+          type: array
+          items:
+            $ref: "#/components/schemas/News"
+      required:
+        - publishedCount
+        - draftCount
+        - breakingCount
+        - featuredCount
+        - latestUpdated
+    AdminNewsCreateRequest:
+      type: object
+      properties:
+        titleAr:
+          type: string
+          minLength: 1
+        summaryAr:
+          type: string
+          minLength: 1
+        bodyAr:
+          type: string
+          minLength: 1
+        categoryId:
+          type: number
+        coverImagePath:
+          type: ["string", "null"]
+        imageAltAr:
+          type: ["string", "null"]
+        tags:
+          type: array
+          items:
+            type: string
+        isFeatured:
+          type: boolean
+          default: false
+        isBreaking:
+          type: boolean
+          default: false
+        readingMinutes:
+          type: ["number", "null"]
+      required:
+        - titleAr
+        - summaryAr
+        - bodyAr
+        - categoryId
+        - coverImagePath
+        - imageAltAr
+        - tags
+        - isFeatured
+        - isBreaking
+        - readingMinutes
+    AdminNewsUpdateRequest:
+      allOf:
+        - $ref: "#/components/schemas/AdminNewsCreateRequest"
+    AdminCategoryCreateRequest:
+      type: object
+      properties:
+        slug:
+          type: string
+          minLength: 1
+        nameAr:
+          type: string
+          minLength: 1
+        nameEn:
+          type: ["string", "null"]
+        sortOrder:
+          type: number
+        isActive:
+          type: boolean
+      required: [slug, nameAr, nameEn, sortOrder, isActive]
+    AdminCategoryUpdateRequest:
+      allOf:
+        - $ref: "#/components/schemas/AdminCategoryCreateRequest"
+    AdminTransferRequest:
+      type: object
+      properties:
+        playerId:
+          type: ["number", "null"]
+        playerNameAr:
+          type: string
+          minLength: 1
+        position:
+          type: ["string", "null"]
+        fromClub:
+          type: ["string", "null"]
+        toClub:
+          type: string
+          minLength: 1
+        feeAmount:
+          type: ["number", "null"]
+        feeCurrency:
+          type: ["string", "null"]
+        feeLabelAr:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [completed, negotiation, rumor]
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 100
+        notesAr:
+          type: ["string", "null"]
+        announcedAt:
+          type: ["string", "null"]
+          format: date-time
+      required:
+        - playerId
+        - playerNameAr
+        - position
+        - fromClub
+        - toClub
+        - feeAmount
+        - feeCurrency
+        - feeLabelAr
+        - status
+        - confidence
+        - notesAr
+        - announcedAt
+    AdminMatchRequest:
+      type: object
+      properties:
+        competition:
+          type: string
+          minLength: 1
+        homeTeam:
+          type: string
+          minLength: 1
+        awayTeam:
+          type: string
+          minLength: 1
+        homeShort:
+          type: ["string", "null"]
+        awayShort:
+          type: ["string", "null"]
+        kickoffAt:
+          type: string
+          format: date-time
+        venue:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [scheduled, live, finished, postponed, cancelled]
+        homeScore:
+          type: ["number", "null"]
+        awayScore:
+          type: ["number", "null"]
+      required:
+        - competition
+        - homeTeam
+        - awayTeam
+        - homeShort
+        - awayShort
+        - kickoffAt
+        - venue
+        - status
+        - homeScore
+        - awayScore
     Category:
       type: object
       properties:

@@ -24,11 +24,11 @@ import {
 
 const router: IRouter = Router();
 
-function serializeDate(value: Date | null): string | null {
+export function serializeDate(value: Date | null): string | null {
   return value ? value.toISOString() : null;
 }
 
-function serializeNews(row: {
+export function serializeNews(row: {
   news: typeof newsTable.$inferSelect;
   categoryNameAr: string;
 }) {

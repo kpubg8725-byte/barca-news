@@ -3,13 +3,25 @@
  * Do not edit manually.
  * Api
  * Public Barça News API
- * OpenAPI spec version: 0.2.0
+ * OpenAPI spec version: 0.3.0
  */
 
+export * from './adminCategoryCreateRequest';
+export * from './adminCategoryUpdateRequest';
+export * from './adminDashboard';
+export * from './adminMatchRequest';
+export * from './adminMatchRequestStatus';
+export * from './adminNewsCreateRequest';
+export * from './adminNewsUpdateRequest';
+export * from './adminTransferRequest';
+export * from './adminTransferRequestStatus';
 export * from './badRequestResponse';
 export * from './category';
 export * from './errorResponse';
+export * from './forbiddenResponse';
 export * from './healthStatus';
+export * from './listAdminNewsParams';
+export * from './listAdminNewsStatus';
 export * from './listMatchesParams';
 export * from './listMatchesScope';
 export * from './listNewsParams';
