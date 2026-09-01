@@ -40,7 +40,7 @@ jobs:
           BASE_PATH: /
         run: pnpm run build
 
-      - name: Sync Capacitor Android
+      - name: Sync Capacitor
         working-directory: artifacts/barca-news
         run: pnpm exec cap sync android
 
@@ -48,8 +48,14 @@ jobs:
         working-directory: artifacts/barca-news/android
         run: ./gradlew assembleRelease
 
-      - name: Upload Release APK
+      - name: Find APK
+        run: |
+          echo "Searching for APK files..."
+          find artifacts/barca-news/android -type f -name "*.apk" -print
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Barca-News-Release-APK
-          path: artifacts/barca-news/android/app/build/outputs/apk/release/app-release.apk
+          name: Barca-News-APK
+          path: artifacts/barca-news/android/**/*.apk
+          if-no-files-found: error
