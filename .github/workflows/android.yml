@@ -20,8 +20,29 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Android
-        uses: android-actions/setup-android@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.1
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web app
+        working-directory: artifacts/barca-news
+        run: pnpm run build
+        env:
+          PORT: 5173
+          BASE_PATH: /
+
+      - name: Sync Capacitor Android
+        working-directory: artifacts/barca-news
+        run: pnpm exec cap sync android
 
       - name: Build APK
         working-directory: artifacts/barca-news/android
