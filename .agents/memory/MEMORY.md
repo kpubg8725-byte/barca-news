@@ -1,0 +1,1 @@
+- [OpenAPI codegen compatibility](openapi-codegen-compatibility.md) — this workspace uses Zod 3, so Orval response integer schemas need Zod-3-compatible generation.

@@ -17,4 +17,14 @@
 //   export type InsertPost = z.infer<typeof insertPostSchema>;
 //   export type Post = typeof postsTable.$inferSelect;
 
-export {}
+export * from "./categories.ts";
+export * from "./enums.ts";
+export * from "./favorites.ts";
+export * from "./matches.ts";
+export * from "./news.ts";
+export * from "./news-players.ts";
+export * from "./notifications.ts";
+export * from "./players.ts";
+export * from "./relations.ts";
+export * from "./transfers.ts";
+export * from "./users.ts";

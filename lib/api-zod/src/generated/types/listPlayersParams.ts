@@ -6,6 +6,11 @@
  * OpenAPI spec version: 0.2.0
  */
 
-export interface HealthStatus {
-  status: string;
-}
+export type ListPlayersParams = {
+search?: string;
+/**
+ * @minimum 1
+ * @maximum 50
+ */
+pageSize?: number;
+};

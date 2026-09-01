@@ -2,14 +2,22 @@ openapi: 3.1.0
 info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 0.2.0
+  description: Public Barça News API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: news
+    description: Published Arabic Barça news
+  - name: catalog
+    description: Categories and players
+  - name: matches
+    description: Barça fixtures and results
+  - name: transfers
+    description: Barça transfer activity
 paths:
   /healthz:
     get:
@@ -24,7 +32,180 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /news:
+    get:
+      operationId: listNews
+      tags: [news]
+      summary: List published news
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: featured
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: breaking
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        "200":
+          description: Paginated published news
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /news/{slug}:
+    get:
+      operationId: getNews
+      tags: [news]
+      summary: Get one published news article
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        "200":
+          description: Published news article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [catalog]
+      summary: List active news categories
+      responses:
+        "200":
+          description: Active categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+  /players:
+    get:
+      operationId: listPlayers
+      tags: [catalog]
+      summary: Search active players
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        "200":
+          description: Active players
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Player"
+  /matches:
+    get:
+      operationId: listMatches
+      tags: [matches]
+      summary: List upcoming or previous matches
+      parameters:
+        - name: scope
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [upcoming, previous]
+            default: upcoming
+      responses:
+        "200":
+          description: Matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Match"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /transfers:
+    get:
+      operationId: listTransfers
+      tags: [transfers]
+      summary: List transfer activity
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [completed, negotiation, rumor]
+      responses:
+        "200":
+          description: Transfer activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transfer"
+        "400":
+          $ref: "#/components/responses/BadRequest"
 components:
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +214,219 @@ components:
           type: string
       required:
         - status
-
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+    Category:
+      type: object
+      properties:
+        id:
+          type: number
+        slug:
+          type: string
+        nameAr:
+          type: string
+        nameEn:
+          type: ["string", "null"]
+        sortOrder:
+          type: number
+        isActive:
+          type: boolean
+      required: [id, slug, nameAr, nameEn, sortOrder, isActive]
+    News:
+      type: object
+      properties:
+        id:
+          type: number
+        slug:
+          type: string
+        titleAr:
+          type: string
+        summaryAr:
+          type: string
+        bodyAr:
+          type: string
+        coverImagePath:
+          type: ["string", "null"]
+        imageAltAr:
+          type: ["string", "null"]
+        categoryId:
+          type: number
+        categoryNameAr:
+          type: string
+        authorId:
+          type: ["number", "null"]
+        relatedMatchId:
+          type: ["number", "null"]
+        status:
+          type: string
+          enum: [draft, published, archived]
+        isFeatured:
+          type: boolean
+        isBreaking:
+          type: boolean
+        readingMinutes:
+          type: ["number", "null"]
+        tags:
+          type: array
+          items:
+            type: string
+        publishedAt:
+          type: ["string", "null"]
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - slug
+        - titleAr
+        - summaryAr
+        - bodyAr
+        - coverImagePath
+        - imageAltAr
+        - categoryId
+        - categoryNameAr
+        - authorId
+        - relatedMatchId
+        - status
+        - isFeatured
+        - isBreaking
+        - readingMinutes
+        - tags
+        - publishedAt
+        - createdAt
+        - updatedAt
+    NewsListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/News"
+        page:
+          type: number
+        pageSize:
+          type: number
+        total:
+          type: number
+      required: [items, page, pageSize, total]
+    Player:
+      type: object
+      properties:
+        id:
+          type: number
+        slug:
+          type: string
+        nameAr:
+          type: string
+        nameLatin:
+          type: ["string", "null"]
+        position:
+          type: string
+        avatarUrl:
+          type: ["string", "null"]
+        noteAr:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+      required:
+        - id
+        - slug
+        - nameAr
+        - nameLatin
+        - position
+        - avatarUrl
+        - noteAr
+        - isActive
+    Match:
+      type: object
+      properties:
+        id:
+          type: number
+        competition:
+          type: string
+        homeTeam:
+          type: string
+        awayTeam:
+          type: string
+        homeShort:
+          type: ["string", "null"]
+        awayShort:
+          type: ["string", "null"]
+        kickoffAt:
+          type: string
+          format: date-time
+        venue:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [scheduled, live, finished, postponed, cancelled]
+        homeScore:
+          type: ["number", "null"]
+        awayScore:
+          type: ["number", "null"]
+      required:
+        - id
+        - competition
+        - homeTeam
+        - awayTeam
+        - homeShort
+        - awayShort
+        - kickoffAt
+        - venue
+        - status
+        - homeScore
+        - awayScore
+    Transfer:
+      type: object
+      properties:
+        id:
+          type: number
+        playerId:
+          type: ["number", "null"]
+        playerNameAr:
+          type: string
+        position:
+          type: ["string", "null"]
+        fromClub:
+          type: ["string", "null"]
+        toClub:
+          type: string
+        feeAmount:
+          type: ["number", "null"]
+        feeCurrency:
+          type: ["string", "null"]
+        feeLabelAr:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [completed, negotiation, rumor]
+        confidence:
+          type: number
+        notesAr:
+          type: ["string", "null"]
+        announcedAt:
+          type: ["string", "null"]
+          format: date-time
+      required:
+        - id
+        - playerId
+        - playerNameAr
+        - position
+        - fromClub
+        - toClub
+        - feeAmount
+        - feeCurrency
+        - feeLabelAr
+        - status
+        - confidence
+        - notesAr
+        - announcedAt

@@ -5,7 +5,8 @@
  * Public Barça News API
  * OpenAPI spec version: 0.2.0
  */
+import type { ListMatchesScope } from './listMatchesScope';
 
-export interface HealthStatus {
-  status: string;
-}
+export type ListMatchesParams = {
+scope?: ListMatchesScope;
+};
